@@ -1,45 +1,48 @@
-#include <stdio.h>
-#include <iostream>
-#include <cctype>
-#include "BetaCipher.h"
-#include <locale>
-using namespace std;
-bool isValid(const wstring& s)
+#include "modAlphaCipher.h"
+
+
+bool isValid(const string& s)
 {
-    for(auto c:s)
-        if (!iswalpha(c) || !iswupper(c))
+    for(const auto &c:s) // цикл проходит по всему массиву и выдает сам объект этого массива
+        if (!isalpha(c) )
             return false;
     return true;
+    
 }
+
+
 int main(int argc, char **argv)
 {
-    int key=3;
-    locale loc("ru_RU.UTF-8");
-    locale::global(loc);
-    wstring z;
-    wstring text;
-    unsigned op;
-    wcout<<L"Cipher ready. Input please Password: ";
-    wcin>>z;
-    BetaCipher cipher(key);
+    int key;
+    string st;
+    unsigned operation;
+    cout<<"ВВЕДИТЕ КЛЮЧ (ЧИСЛО) : ";
+    cin>>key;
+    if (!cin.good()) {
+        clog<<"КЛЮЧ НЕ ПОДХОДИТ\n";
+        return 1;
+    }
+    cout<<"КЛЮЧ ПРИНЯТ\n";
+    modAlphaCipher cipher(key);
     do {
-        wcout<<L"Cipher ready. Input please operation (0-exit, 1-encrypt, 2-decrypt): ";
-        wcin>>op;
-        if (op > 2) {
-            wcout<<L"Illegal operation\n";
-        } else if (op >0) {
-            wcout<<L"Cipher ready. Input please text: ";
-            wcin>>text;
-            if (isValid(text)) {
-                if (op==1) {
-                    wcout<<L"Encrypted text: "<<cipher.CoderBetaCipher(cipher, text)<<endl;
+        cout<<"ВЫБЕРИТЕ ОПЕРАЦИЮ (0-ВЫХОД, 1-ЗАШИФРОВАТЬ, 2-РАСШИФРОВАТЬ): ";
+        cin>>operation;
+        if (operation > 2) {
+            cout<<"ОШИБКА В ВЫБОРЕ ОПЕРАЦИИ\n";
+        } else if (operation >0) {
+            cout<<"ВВЕДИТЕ СТРОКУ, СОСТОЯЩУЮ ИЗ ЛАТИНИЦЫ : ";
+            cin>>st;
+            if (isValid(st)) {
+                if (operation==1) {
+                    cout<<"ЗАШИФРОВАННАЯ СТРОКА: "<<cipher.coder(st)<<endl;
                 } else {
-                    wcout<<L"Decrypted text: "<<cipher.DecoderBetaCipher(cipher, text)<<endl;
+                    cout<<"РАСШИФРОВАННАЯ СТРОКА: "<<cipher.decoder(st)<<endl;
                 }
             } else {
-                wcout<<L"Operation aborted: invalid text\n";
+                cout<<"НЕКОРРЕКТНАЯ СТРОКА.\n";
             }
         }
-    } while (op!=0);
+    } while (operation!=0);
+
     return 0;
 }
